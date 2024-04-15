@@ -179,77 +179,61 @@ def revise(csp, var1, var2):
     print(f"Domain of {var1}: {domain_var1}")
     print(f"Domain of {var2}: {domain_var2}")
     
-    values_to_remove = set()
+    values_to_remove_var1 = set()
     
-    # Iterate over each value in the domain of var2
-    for val2 in domain_var2:
-        print(f"Checking value {val2} in domain of {var2}")
-        # Check if there exists a value in the domain of var1 that satisfies the constraint with val2
+    # Iterate over each value in the domain of var1
+    for val1 in domain_var1:
+        # Check if there exists a value in the domain of var2 that satisfies the constraint with val1
         satisfying_value_exists = False
-        for val1 in domain_var1:
+        for val2 in domain_var2:
             if (val1, val2) in constraint[1]:
                 satisfying_value_exists = True
                 break
         
-        # If no satisfying value exists in domain_var1 for val2, remove val2 from domain_var2
+        # If no satisfying value exists in domain_var2 for val1, remove val1 from domain_var1
         if not satisfying_value_exists:
-            print(f"No satisfying value found in domain of {var1} for {val2} in domain of {var2}")
-            values_to_remove.add(val2)
+            print(f"No satisfying value found in domain of {var2} for {val1} in domain of {var1}")
+            values_to_remove_var1.add(val1)
             revised = True
     
-    # Remove values from domain_var2
-    for val in values_to_remove:
-        print(f"Removing value {val} from domain of {var2}")
-        domain_var2.remove(val)
+    # Remove values from domain_var1
+    for val in values_to_remove_var1:
+        print(f"Removing value {val} from domain of {var1}")
+        domain_var1.remove(val)
     
-    print(f"Updated domain of {var2}: {domain_var2}")
+    print(f"Updated domain of {var1}: {domain_var1}")
     
     return revised
 
 
-#csp = initialize_sudoku()
-#print(revise(csp,"C22","C23"))
+
+csp = initialize_sudoku()
+print(revise(csp,"C23","C22"))
 
 def AC3(csp):
-    def get_neighbors(csp, var):
-        neighbors = set()
-        constraints = csp['CONSTRAINTS']
-        for constraint in constraints:
-            if var in constraint[0]:
-                neighbor = constraint[0][0] if constraint[0][1] == var else constraint[0][1]
-                neighbors.add(neighbor)
-        return neighbors
-
-    def check_neighbors(csp, var):
-        neighbors = get_neighbors(csp, var)
-        for neighbor in neighbors:
-            if not csp['VARIABLES'][neighbor]:
-                return False
-        return True
-
-    queue = []
-    constraints = csp['CONSTRAINTS']
-
-    # Initialize queue with all arcs from constraints
-    for constraint in constraints:
-        var1, var2 = constraint[0]
-        queue.append((var1, var2))
-
-    # Process arcs in the queue
-    while queue:
-        var1, var2 = queue.pop(0)
-
-        # Revise the CSP based on the constraint between var1 and var2
-        if revise(csp, var1, var2):
-            # If any value is removed from the domain of var1, add arcs (X, var1) to the queue
-            for neighbor in get_neighbors(csp, var1):
-                if neighbor != var2:
-                    queue.append((neighbor, var1))
-
-    # Check if all variables and their neighbors have at least one value left in their domains
+    # Generate neighbors from constraints
+    neighbors = {}
     for var in csp['VARIABLES']:
-        if not csp['VARIABLES'][var] or not check_neighbors(csp, var):
-            return False
+        neighbors[var] = set()
+    for constraint in csp['CONSTRAINTS']:
+        var1, var2 = constraint[0]
+        neighbors[var1].add(var2)
+        neighbors[var2].add(var1)
+
+    queue = [(var1, var2) for var1 in neighbors for var2 in neighbors[var1]]
+    
+    while queue:
+        xi, xj = queue.pop(0)
+        print(f"Processing arc: ({xi}, {xj})")
+        if revise(csp, xi, xj):
+            if len(csp['VARIABLES'][xi]) == 0:
+                print("Inconsistency detected: Empty domain")
+                return False
+            for xk in neighbors[xi] - {xj}:
+                print(f"Adding arc to queue: ({xk}, {xi})")
+                queue.append((xk, xi))
+    
+    print("AC-3 completed successfully: No inconsistencies found")
     return True
 
 csp = initialize_sudoku()
@@ -268,52 +252,4 @@ def minimum_remaining_values(csp, assignment):
     
     return min_domain_variable
 
-#print(minimum_remaining_values(csp,{"C43":2}))
-
-def backtrack_search(csp):
-    def is_complete(assignment, csp):
-        return all(len(domain) == 1 for domain in csp['VARIABLES'].values())
-    
-    def backtrack(assignment, csp, assignment_order, remaining_domains):
-        if is_complete(assignment, csp):
-            return assignment, assignment_order, remaining_domains
-        
-        var = minimum_remaining_values(csp, assignment)
-        if var is None:
-            return None  # No valid variable found
-        
-        for value in csp['VARIABLES'][var]:
-            new_assignment = assignment.copy()
-            new_assignment[var] = value
-            assignment_order.append((var, value))
-            
-            # Maintain arc consistency using AC-3
-            updated_domains = AC3(csp)
-            
-            if updated_domains is not None:
-                result = backtrack(new_assignment, csp, assignment_order, updated_domains)
-                if result is not None:
-                    return result
-                
-            assignment_order.pop()
-            del new_assignment[var]
-        
-        return None
-    
-    assignment = {}
-    assignment_order = []
-    remaining_domains = {var: domain.copy() for var, domain in csp['VARIABLES'].items()}
-    
-    result = backtrack(assignment, csp, assignment_order, remaining_domains)
-    if result is None:
-        return None, None, None  # No solution found
-    else:
-        return result
-
-# Test the backtracking search
-#csp = initialize_sudoku()
-solution, assignment_order, remaining_domains = backtrack_search(csp)
-print("Solution:", solution)
-#print("Assignment Order:", assignment_order)
-#print("Remaining Domains:", remaining_domains)
 
