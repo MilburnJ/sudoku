@@ -1,13 +1,42 @@
+from sudoku_constraints9x9 import constraint9x9
+from flask import Flask, render_template
+
 def initialize_sudoku():
     # Define variables
+    #4by4 test
+    """
     variables = {
         'C11': [1], 'C12': [1, 2, 3, 4], 'C13': [1, 2, 3, 4], 'C14': [1, 2, 3, 4],
         'C21': [1, 2, 3, 4], 'C22': [2], 'C23': [1, 2, 3, 4], 'C24': [1, 2, 3, 4],
         'C31': [1, 2, 3, 4], 'C32': [1, 2, 3, 4], 'C33': [3], 'C34': [1, 2, 3, 4],
         'C41': [1, 2, 3, 4], 'C42': [1, 2, 3, 4], 'C43': [1, 2, 3, 4], 'C44': [4]
     }
+    """
 
-    # Define constraints
+    #puzzle1
+
+    variables = {
+            'C11': [7], 'C12': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C13': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C14': [4], 'C15': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C16': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C17': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C18': [8], 'C19': [6],
+            'C21': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C22': [5], 'C23': [1], 'C24': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C25': [8], 'C26': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C27': [4], 'C28': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C29': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C31': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C32': [4], 'C33': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C34': [3], 'C35': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C36': [7], 'C37': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C38': [9], 'C39': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C41': [3], 'C42': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C43': [9], 'C44': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C45': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C46': [6], 'C47': [1], 'C48': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C49': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C51': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C52': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C53': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C54': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C55': [2], 'C56': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C57': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C58': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C59': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C61': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C62': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C63': [4], 'C64': [9], 'C65': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C66': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C67': [7], 'C68': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C69': [8],
+            'C71': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C72': [8], 'C73': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C74': [1], 'C75': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C76': [2], 'C77': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C78': [6], 'C79': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C81': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C82': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C83': [6], 'C84': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C85': [5], 'C86': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C87': [9], 'C88': [1], 'C89': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C91': [2], 'C92': [1], 'C93': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C94': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C95': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C96': [3], 'C97': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C98': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C99': [5],
+        }
+
+    
+
+
+    constraints = constraint9x9
+
+    #4by4 constraints
+    #Please note that I wrote this before looking at the python restraints, so my structure is different,
+    #I had to edit my code to take the 9by9 restraints, however these did work before my edits
+
+    """
     constraints = [
         #C11 constraints
         (('C11', 'C12'), [(1, 2), (1, 3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)]),
@@ -152,9 +181,9 @@ def initialize_sudoku():
         (('C44', 'C24'), [(1, 2), (1, 3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)]),
         (('C44', 'C34'), [(1, 2), (1, 3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)]),
         (('C44', 'C33'), [(1, 2), (1, 3),(1,4),(2,1),(2,3),(2,4),(3,1),(3,2),(3,4),(4,1),(4,2),(4,3)]),
-
-
     ]
+    """
+
     
     return {'VARIABLES': variables, 'CONSTRAINTS': constraints}
 
@@ -164,16 +193,16 @@ def revise(csp, var1, var2):
     
     # Find the constraint between var1 and var2
     constraint = None
-    for c in constraints:
-        if (c[0][0] == var1 and c[0][1] == var2):
-            constraint = c
+    for var_pair, constraint_list in constraints:
+        if var1 in var_pair and var2 in var_pair:
+            constraint = constraint_list
             break
     
     if constraint is None:
         return False  # No constraint found
-    
-    domain_var1 = csp['VARIABLES'][var1]
-    domain_var2 = csp['VARIABLES'][var2]
+    else:
+        domain_var1 = csp['VARIABLES'][var1]
+        domain_var2 = csp['VARIABLES'][var2]
     
     print(f"Constraint between {var1} and {var2}: {constraint}")
     print(f"Domain of {var1}: {domain_var1}")
@@ -185,10 +214,12 @@ def revise(csp, var1, var2):
     for val1 in domain_var1:
         # Check if there exists a value in the domain of var2 that satisfies the constraint with val1
         satisfying_value_exists = False
-        for val2 in domain_var2:
-            if (val1, val2) in constraint[1]:
-                satisfying_value_exists = True
-                break
+        for val_pair in constraint:
+            if val1 in val_pair:
+                other_val = val_pair[0] if val_pair[1] == val1 else val_pair[1]
+                if other_val in domain_var2:
+                    satisfying_value_exists = True
+                    break
         
         # If no satisfying value exists in domain_var2 for val1, remove val1 from domain_var1
         if not satisfying_value_exists:
@@ -206,17 +237,13 @@ def revise(csp, var1, var2):
     return revised
 
 
-
-csp = initialize_sudoku()
-print(revise(csp,"C23","C22"))
-
 def AC3(csp):
     # Generate neighbors from constraints
     neighbors = {}
     for var in csp['VARIABLES']:
         neighbors[var] = set()
-    for constraint in csp['CONSTRAINTS']:
-        var1, var2 = constraint[0]
+    for var_pair, _ in csp['CONSTRAINTS']:
+        var1, var2 = var_pair
         neighbors[var1].add(var2)
         neighbors[var2].add(var1)
 
@@ -232,12 +259,12 @@ def AC3(csp):
             for xk in neighbors[xi] - {xj}:
                 print(f"Adding arc to queue: ({xk}, {xi})")
                 queue.append((xk, xi))
+        
     
     print("AC-3 completed successfully: No inconsistencies found")
     return True
 
-csp = initialize_sudoku()
-print(AC3(csp))
+
 
 def minimum_remaining_values(csp, assignment):
     unassigned_variables = [var for var in csp['VARIABLES'] if var not in assignment]
@@ -249,7 +276,78 @@ def minimum_remaining_values(csp, assignment):
         if domain_size < min_domain_size:
             min_domain_size = domain_size
             min_domain_variable = var
-    
+    print(f"Minimum Variable:{min_domain_variable}")
     return min_domain_variable
 
 
+def backtracking_search(csp):
+    assignment = {}
+    assignment_order = []
+    domain_states = []
+
+    def backtrack():
+        if len(assignment) == len(csp['VARIABLES']):
+            return assignment, assignment_order, domain_states
+        var = minimum_remaining_values(csp, assignment)
+        domain_states.append({key: value[:] for key, value in csp['VARIABLES'].items()})
+        for value in csp['VARIABLES'][var][:]:
+            assignment[var] = value
+            assignment_order.append(var)
+            if is_consistent(assignment, csp['CONSTRAINTS']):
+                csp['VARIABLES'][var] = [value]
+                if AC3(csp):
+                    result = backtrack()
+                    if result is not None:  # Check if result is not None
+                        return result
+            assignment.pop(var)
+            assignment_order.pop()
+            if domain_states:  # Check if domain_states is not empty
+                csp['VARIABLES'] = domain_states.pop()
+            else:
+                return None  # If domain_states is empty, backtrack failed
+        return None  # If no value leads to a solution, backtrack failed
+
+    return backtrack() or (None, None, None)
+
+
+def is_consistent(assignment, constraints):
+    for (var1, var2), allowed_values in constraints:
+        if var1 in assignment and var2 in assignment:
+            value1 = assignment[var1]
+            value2 = assignment[var2]
+            if (value1, value2) not in allowed_values and (value2, value1) not in allowed_values:
+                return False
+    return True
+
+
+
+"""
+solution, assignment_order, domains_after_assignment = backtracking_search(csp)
+if solution:
+    print("Solution found:")
+    print(solution)
+    print("Assignment order:")
+    print(assignment_order)
+    print("Domains after each assignment:")
+    print(domains_after_assignment)
+else:
+    print("No solution exists.")
+"""
+
+csp = initialize_sudoku()
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('sudoku.html', sudoku_data=csp["VARIABLES"])
+
+@app.route('/solve', methods=['POST'])
+def solve():
+    # Solve the Sudoku puzzle
+    solution, assignment_order, domains_after_assignment = backtracking_search(csp)
+    
+    # Render the template with the updated Sudoku data
+    return render_template('sudoku.html', sudoku_data=solution)
+
+if __name__ == '__main__':
+    app.run(debug=True)
