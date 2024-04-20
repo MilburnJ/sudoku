@@ -38,6 +38,11 @@
 <body>
     <div>
         <h1 style="text-align: center;">Sudoku Solver</h1>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button onclick="selectPuzzle(1)">Puzzle 1</button>
+            <button onclick="selectPuzzle(2)">Puzzle 2</button>
+            <button onclick="selectPuzzle(3)">Puzzle 3</button>
+        </div>
         <table class="sudoku-board">
             {% for row in range(1, 10) %}
             {% set row_group = row // 3 %}

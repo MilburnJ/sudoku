@@ -14,7 +14,6 @@ def initialize_sudoku():
     """
 
     #puzzle1
-
     variables = {
             'C11': [7], 'C12': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C13': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C14': [4], 'C15': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C16': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C17': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C18': [8], 'C19': [6],
             'C21': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C22': [5], 'C23': [1], 'C24': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C25': [8], 'C26': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C27': [4], 'C28': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C29': [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -187,6 +186,7 @@ def initialize_sudoku():
     
     return {'VARIABLES': variables, 'CONSTRAINTS': constraints}
 
+
 def revise(csp, var1, var2):
     revised = False
     constraints = csp['CONSTRAINTS']
@@ -284,10 +284,11 @@ def backtracking_search(csp):
     assignment = {}
     assignment_order = []
     domain_states = []
+    backtrack_counts = {}
 
     def backtrack():
         if len(assignment) == len(csp['VARIABLES']):
-            return assignment, assignment_order, domain_states
+            return assignment, assignment_order, domain_states, backtrack_counts
         var = minimum_remaining_values(csp, assignment)
         domain_states.append({key: value[:] for key, value in csp['VARIABLES'].items()})
         for value in csp['VARIABLES'][var][:]:
@@ -307,7 +308,9 @@ def backtracking_search(csp):
                 return None  # If domain_states is empty, backtrack failed
         return None  # If no value leads to a solution, backtrack failed
 
-    return backtrack() or (None, None, None)
+    return backtrack() or (None, None, None, None)
+
+
 
 
 def is_consistent(assignment, constraints):
@@ -319,7 +322,7 @@ def is_consistent(assignment, constraints):
                 return False
     return True
 
-
+    
 
 """
 solution, assignment_order, domains_after_assignment = backtracking_search(csp)
@@ -334,20 +337,39 @@ else:
     print("No solution exists.")
 """
 
+
 csp = initialize_sudoku()
+
+def selectPuzzle(puzzleNum):
+    if(puzzleNum == 2):
+        csp['VARIABLES'] = {
+            'C11': [7], 'C12': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C13': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C14': [4], 'C15': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C16': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C17': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C18': [8], 'C19': [6],
+            'C21': [2], 'C22': [5], 'C23': [1], 'C24': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C25': [8], 'C26': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C27': [4], 'C28': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C29': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C31': [2], 'C32': [4], 'C33': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C34': [3], 'C35': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C36': [7], 'C37': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C38': [9], 'C39': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C41': [3], 'C42': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C43': [9], 'C44': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C45': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C46': [6], 'C47': [1], 'C48': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C49': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C51': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C52': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C53': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C54': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C55': [2], 'C56': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C57': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C58': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C59': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C61': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C62': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C63': [4], 'C64': [9], 'C65': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C66': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C67': [7], 'C68': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C69': [8],
+            'C71': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C72': [8], 'C73': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C74': [1], 'C75': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C76': [2], 'C77': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C78': [6], 'C79': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C81': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C82': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C83': [6], 'C84': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C85': [5], 'C86': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C87': [9], 'C88': [1], 'C89': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'C91': [2], 'C92': [1], 'C93': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C94': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C95': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C96': [3], 'C97': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C98': [1, 2, 3, 4, 5, 6, 7, 8, 9], 'C99': [5],
+        }
+
 app = Flask(__name__)
 
 @app.route('/')
 def index():
+    
+    # Render the template with the initial Sudoku board
     return render_template('sudoku.html', sudoku_data=csp["VARIABLES"])
 
 @app.route('/solve', methods=['POST'])
 def solve():
-    # Solve the Sudoku puzzle
-    solution, assignment_order, domains_after_assignment = backtracking_search(csp)
     
-    # Render the template with the updated Sudoku data
-    return render_template('sudoku.html', sudoku_data=solution)
+    # Solve the Sudoku puzzle
+    solution, assignment_order, domains_after_assignment, backtrack_counts = backtracking_search(csp)
+    
+    # Render the template with the solved Sudoku board and additional information
+    return render_template('sudoku.html', sudoku_data=solution, assignment_order=assignment_order, backtrack_counts=backtrack_counts)
 
 if __name__ == '__main__':
     app.run(debug=True)
